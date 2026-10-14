@@ -1,30 +1,30 @@
-# Requirements: Simple Guitar Note Finder Webpage
+# Requirements: Simple Guitar Fingering Finder Webpage
 
 ## 1. Goal
-Build a simple webpage where a user enters space-separated musical notes, and the app returns useful **guitar-related findings** based on those notes.
+Build a simple webpage where a user enters space-separated musical notes, and the app returns **guitar fingerings that include those notes**.
 
 ## 2. Scope (MVP)
 - Single-page web interface.
 - One text input for notes.
 - A button (or automatic trigger) to run analysis.
-- Results area showing guitar-related matches.
+- Results area showing guitar fingerings.
 - Basic validation and user-friendly error messages.
 
 ## 3. Input Requirements
 ### 3.1 Accepted format
 - Notes are entered as **space-separated tokens**.
-- Example: `C D E F# G A B`
+- Example: `C E G Bb`
 
 ### 3.2 Supported note symbols
 - Natural notes: `A B C D E F G`
 - Sharps: `#` form, e.g. `F#`, `C#`
 - Flats: `b` form, e.g. `Bb`, `Eb`
-- Case-insensitive input should be accepted (`c d e` == `C D E`).
+- Case-insensitive input should be accepted (`c e g` == `C E G`).
 
 ### 3.3 Normalization
 - Trim leading/trailing spaces.
 - Collapse repeated spaces.
-- Normalize note names to a canonical format for processing.
+- Normalize enharmonic spellings to a canonical internal pitch class representation for matching.
 
 ### 3.4 Validation
 - Reject invalid tokens (e.g. `H`, `R#`, `Cb#`).
@@ -37,67 +37,83 @@ Build a simple webpage where a user enters space-separated musical notes, and th
 - Convert tokens into internal pitch classes.
 - Remove exact duplicates for matching logic, while optionally preserving original order for display.
 
-### 4.2 Guitar Findings Engine
-Given normalized notes, return relevant guitar findings, including:
+### 4.2 Guitar Fingering Engine (Core MVP)
+Given normalized notes, generate or retrieve candidate guitar fingerings and return those that satisfy the note constraints.
 
-1. **Possible chord names**
-   - Identify likely chord qualities (major, minor, 7, maj7, sus, etc.) where possible.
-   - Support multiple candidate matches when ambiguous.
+#### 4.2.1 What qualifies as a match
+For each fingering candidate:
+- Determine the set of pitch classes produced by fretted/open strings (ignoring muted strings).
+- A candidate is a **valid match** when it **includes all user-entered notes**.
+- Additional notes are allowed in MVP (superset matching).
 
-2. **Playable guitar chord shapes (when available)**
-   - For matched chords, provide one or more playable voicings/fingerings.
-   - Include basic metadata per shape:
-     - Fret positions
-     - Muted/open strings
-     - Optional finger numbers
+#### 4.2.2 Fingering data per result
+Each returned fingering should include:
+- String-by-string positions (e.g. `x 3 2 0 1 0`)
+- Muted/open/fretted status
+- Optional suggested finger numbers (if available)
+- Calculated pitch classes produced by that shape
+- Optional root note / inferred chord label (secondary metadata only)
 
-3. **Related scale hints (optional in MVP, required in next phase)**
-   - Suggest compatible scales/modes for the entered note set.
+#### 4.2.3 Search/Generation constraints
+- Support standard tuning (E A D G B E) in MVP.
+- Restrict to practical fret range in MVP (e.g. frets 0–12).
+- Filter out obviously unplayable shapes using simple heuristics:
+  - Max fret span threshold
+  - Limited simultaneous distinct frets
+  - Optional barre detection limits
 
-### 4.3 Ranking/Ordering of Findings
-- Results should be ordered by practical usefulness for guitar players.
-- Prefer common chord interpretations and common playable shapes first.
+### 4.3 Result Ranking
+Order results by practical playability:
+1. Lower fret positions first
+2. Lower fret span
+3. Fewer difficult stretches/barres
+4. Common/open-position shapes preferred when otherwise equal
 
 ### 4.4 Empty and Edge Cases
 - Empty input: prompt user to enter notes.
-- Single note or two-note input: return meaningful guitar context (interval/power-chord hint if applicable).
-- Large note sets: still return best-effort findings.
+- Single-note input: show playable positions including that note.
+- Two-note input: show dyads/power-chord-like options where applicable.
+- Large note sets: return best-effort results; if none, explain constraints.
 
 ## 5. Output/Display Requirements
-- Show a clear “Findings” section.
-- For each finding, display:
-  - Name (e.g. `Cmaj7`)
-  - Why it matches (the matched notes)
-  - Guitar shape summary (if available)
-- If no findings, show a friendly “No matches found” message with suggestions.
+- Show a clear “Fingerings” section.
+- For each result, display:
+  - Fingering pattern (e.g. `x 3 2 0 1 0`)
+  - Notes produced by that fingering
+  - Why it matches (input notes covered)
+  - Optional inferred chord name (if confidently inferred)
+- If no results, show a friendly “No matching fingerings found” message with suggestions.
 
 ## 6. Non-Functional Requirements
-- Fast response for normal inputs (target: under 200ms on modern desktop for typical note sets).
+- Fast response for typical inputs (target: under 300ms on modern desktop for standard search bounds).
 - Pure client-side operation for MVP (no backend required).
 - Clean, mobile-friendly layout.
-- Code structure should allow replacing or upgrading matching logic later.
+- Modular logic so tuning/range/ranking can be extended later.
 
 ## 7. User Stories
-1. As a guitarist, I can type `C E G` and quickly see likely chord matches and playable shapes.
-2. As a beginner, I get clear error messages when I type invalid note names.
-3. As a mobile user, I can enter notes and read results without zooming or horizontal scrolling.
+1. As a guitarist, I can type notes and get playable guitar fingerings that include all those notes.
+2. As a beginner, I get clear feedback when I type invalid note names.
+3. As a mobile user, I can enter notes and read fingering results without zooming or horizontal scrolling.
 
 ## 8. Acceptance Criteria (MVP)
 - User can input space-separated notes and run search.
 - App validates notes and reports invalid tokens.
-- App returns at least one guitar-relevant finding for common triads (e.g. C E G, A C E, D F# A).
-- Results are readable and structured.
+- App returns at least one fingering for common note sets (e.g. `C E G`, `A C E`, `D F# A`) within configured search bounds.
+- Every returned fingering includes all user-input notes.
+- Results are readable, structured, and sorted by playability.
 - Works on latest desktop Chrome/Firefox/Safari and mobile browser widths.
 
 ## 9. Out of Scope (for now)
 - Audio playback.
-- Full fretboard visualization.
+- Alternate tunings (drop D, DADGAD, etc.).
+- Left-handed mirroring.
 - User accounts/saving presets.
-- Advanced reharmonization analysis.
+- Advanced harmonic analysis.
 
 ## 10. Future Enhancements
 - Interactive chord diagram rendering.
-- Fretboard note map highlighting.
-- Tuning selection (E standard, drop D, etc.).
-- Left-handed display mode.
-- Export/share findings.
+- Fretboard visualization of matched notes.
+- Exact-match mode (no extra notes allowed).
+- Tuning selection and capo support.
+- Difficulty scoring customization.
+- Export/share fingerings.
