@@ -1,7 +1,7 @@
 # Requirements: Simple Guitar Fingering Finder Webpage
 
 ## 1. Goal
-Build a simple webpage where a user enters space-separated musical notes, and the app returns **guitar fingerings that include those notes**.
+Build a simple webpage where a user enters space-separated musical notes, and the app returns **guitar fingerings that exactly match those notes (no extra notes)**.
 
 ## 2. Scope (MVP)
 - Single-page web interface.
@@ -43,8 +43,8 @@ Given normalized notes, generate or retrieve candidate guitar fingerings and ret
 #### 4.2.1 What qualifies as a match
 For each fingering candidate:
 - Determine the set of pitch classes produced by fretted/open strings (ignoring muted strings).
-- A candidate is a **valid match** when it **includes all user-entered notes**.
-- Additional notes are allowed in MVP (superset matching).
+- A candidate is a **valid match** when it **exactly matches the user-entered notes (no missing, no extra)**.
+- Additional notes are NOT allowed (exact-match mode).
 
 #### 4.2.2 Fingering data per result
 Each returned fingering should include:
@@ -91,7 +91,7 @@ Order results by practical playability:
 - Modular logic so tuning/range/ranking can be extended later.
 
 ## 7. User Stories
-1. As a guitarist, I can type notes and get playable guitar fingerings that include all those notes.
+1. As a guitarist, I can type notes and get playable guitar fingerings that exactly match those notes.
 2. As a beginner, I get clear feedback when I type invalid note names.
 3. As a mobile user, I can enter notes and read fingering results without zooming or horizontal scrolling.
 
@@ -99,7 +99,7 @@ Order results by practical playability:
 - User can input space-separated notes and run search.
 - App validates notes and reports invalid tokens.
 - App returns at least one fingering for common note sets (e.g. `C E G`, `A C E`, `D F# A`) within configured search bounds.
-- Every returned fingering includes all user-input notes.
+- Every returned fingering sounds exactly the user-input pitch classes (no extras).
 - Results are readable, structured, and sorted by playability.
 - Works on latest desktop Chrome/Firefox/Safari and mobile browser widths.
 
