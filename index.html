@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guitar Fingering Finder</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 1rem; }
+  form { display: flex; gap: .5rem; }
+  input { flex: 1; font-size: 1rem; padding: .5rem; min-width: 0; }
+  button { font-size: 1rem; padding: .5rem 1rem; }
+  .hint { color: #555; font-size: .9rem; }
+  #message { color: #b00020; min-height: 1.4em; }
+  #results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .75rem; }
+  .card { display: flex; gap: .75rem; align-items: center; border: 1px solid #ccc; border-radius: 8px; padding: .5rem; }
+  .card p { margin: .25rem 0; }
+</style>
+</head>
+<body>
+<h1>Guitar Fingering Finder</h1>
+<form id="form">
+  <input id="notes" aria-label="Notes" placeholder="C E G" autocomplete="off" aria-describedby="hint">
+  <button type="submit">Find</button>
+</form>
+<p id="hint" class="hint">Enter space-separated notes (A–G, # or b), e.g. <code>C E G</code> or <code>A C E</code>. Standard tuning; only fingerings with exactly these notes are shown.</p>
+<p id="message" role="status"></p>
+<section id="results"></section>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
