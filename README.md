@@ -11,6 +11,14 @@ relative paths), so it runs on any static host.
 Pushes to `main` are deployed by `.github/workflows/pages.yml` to
 `https://<user>.github.io/chordcreator/`.
 
+**Azure Static Web Apps:** create an Azure Static Web App and add its deployment
+token to the GitHub repository as the `AZURE_STATIC_WEB_APPS_API_TOKEN` Actions
+secret (Settings → Secrets and variables → Actions). The existing
+`.github/workflows/azure-static-web-apps.yml` workflow deploys the static site
+when changes are pushed to `main`; pull requests get preview deployments, which
+are closed when the pull request is closed. You can also run the workflow
+manually from the Actions tab.
+
 **Locally:** browsers block ES modules on `file://`, so opening `index.html`
 directly will not work; use any static server:
 
