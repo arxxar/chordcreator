@@ -4,7 +4,15 @@ Client-side guitar fingering finder. Enter space-separated notes and get playabl
 fingerings with chord box diagrams.
 
 ## Run
-ES modules need an HTTP server (no build step, no backend):
+No build step, no backend. It is a static site (`index.html` + `src/*.js`, all
+relative paths), so it runs on any static host.
+
+**GitHub Pages:** in the repo, go to Settings → Pages → Source: "GitHub Actions".
+Pushes to `main` are deployed by `.github/workflows/pages.yml` to
+`https://<user>.github.io/chordcreator/`.
+
+**Locally:** browsers block ES modules on `file://`, so opening `index.html`
+directly will not work; use any static server:
 
     python3 -m http.server 8000   # then open http://localhost:8000
 
